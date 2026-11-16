@@ -1,0 +1,1118 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <title>دانشنامه پرندگان ایران | پیوند پرندگان، طبیعت و انسان</title>
+    <!-- بارگذاری Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- بارگذاری فونت فارسی وزیرمتن از Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@100..900&display=swap" rel="stylesheet">
+    
+    <style>
+        /* تنظیمات پایه، فونت فارسی و جلوگیری از اسکرول ناخواسته در بدنه اصلی */
+        * {
+            font-family: 'Vazirmatn', sans-serif;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            height: 100dvh;
+            overflow: hidden;
+            background-color: #090d16;
+        }
+
+        /* تایپوگرافی سیال و مقیاس‌پذیر برای تمام اندازه‌های صفحه (320px تا 4K) */
+        .fluid-title {
+            font-size: clamp(1.35rem, 3.2vw + 0.5rem, 2.75rem);
+            line-height: 1.25;
+        }
+
+        .fluid-subtitle {
+            font-size: clamp(0.85rem, 1.4vw + 0.35rem, 1.2rem);
+            line-height: 1.5;
+        }
+
+        .fluid-body {
+            font-size: clamp(0.82rem, 1.1vw + 0.35rem, 1.05rem);
+            line-height: 1.75;
+        }
+
+        /* لایه‌های پس‌زمینه برای تغییر رنگ نرم و تدریجی (Cross-fade) بین اسلایدها */
+        .bg-layer {
+            position: fixed;
+            inset: 0;
+            transition: opacity 1.1s cubic-bezier(0.4, 0, 0.2, 1);
+            opacity: 0;
+            z-index: 0;
+        }
+
+        .bg-layer.active {
+            opacity: 1;
+        }
+
+        /* ۵ تم رنگی متناسب با زیست‌بوم‌های ایران */
+        /* 1. سپیده‌دم کوهستان و تنوع زیستی ایران */
+        .theme-dawn {
+            background: radial-gradient(circle at 18% 20%, #fde68a 0%, #d97706 25%, #0369a1 72%, #0f172a 100%);
+        }
+        /* 2. غروب طلایی حاشیه شهرها و آسمان باز (کورکور سیاه) */
+        .theme-urban-sunset {
+            background: linear-gradient(135deg, #ea580c 0%, #b45309 42%, #1e293b 100%);
+        }
+        /* 3. شفق اسطوره‌ای و شب‌روز (جغد کوچک / آتنا) */
+        .theme-mythic {
+            background: linear-gradient(135deg, #7c3aed 0%, #4338ca 48%, #0f172a 100%);
+        }
+        /* 4. آبی فیروزه‌ای تالاب‌های ایران (کشیم گردن‌سرخ و جغد ماهیخوار) */
+        .theme-wetland {
+            background: linear-gradient(135deg, #0d9488 0%, #0284c7 52%, #082f49 100%);
+        }
+        /* 5. آبی عمیق خلیج فارس و آسمان پرستاره (فائتون نوک‌سرخ) */
+        .theme-marine-night {
+            background: radial-gradient(circle at 82% 18%, #1d4ed8 0%, #1e1b4b 48%, #060913 100%);
+        }
+
+        /* افکت شیشه‌ای مدرن (Glassmorphism) */
+        .glass-card {
+            background: rgba(15, 23, 42, 0.38);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.45);
+        }
+
+        .glass-pill {
+            background: rgba(255, 255, 255, 0.14);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+        }
+
+        /* انیمیشن شناور ملایم برای المان‌ها */
+        @keyframes floatSlow {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-10px) rotate(1.5deg); }
+        }
+
+        .animate-float {
+            animation: floatSlow 5.5s ease-in-out infinite;
+        }
+
+        /* انیمیشن ورود محتوای اسلاید */
+        @keyframes slideContentIn {
+            0% {
+                opacity: 0;
+                transform: translateY(18px) scale(0.98);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .slide-enter {
+            animation: slideContentIn 0.65s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+        }
+
+        /* استایل نوار پیشرفت بالا */
+        .progress-bar {
+            transition: width 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        /* اسکرول‌بار سفارشی ظریف برای مودال‌ها و کارت‌ها در موبایل‌های کوچک */
+        .custom-scroll::-webkit-scrollbar {
+            width: 5px;
+            height: 5px;
+        }
+        .custom-scroll::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+        }
+        .custom-scroll::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.28);
+            border-radius: 10px;
+        }
+
+        /* ستاره‌های چشمک‌زن برای اسلاید دریا و شب */
+        .star {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            animation: twinkle var(--duration) ease-in-out infinite;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.2; transform: scale(0.8); }
+            50% { opacity: 1; transform: scale(1.25); }
+        }
+    </style>
+</head>
+<body class="text-white antialiased selection:bg-amber-400 selection:text-slate-950 flex flex-col justify-between">
+
+    <!-- لایه‌های پس‌زمینه برای تغییر نرم رنگ‌ها -->
+    <div id="bg-0" class="bg-layer theme-dawn active"></div>
+    <div id="bg-1" class="bg-layer theme-urban-sunset"></div>
+    <div id="bg-2" class="bg-layer theme-mythic"></div>
+    <div id="bg-3" class="bg-layer theme-wetland"></div>
+    <div id="bg-4" class="bg-layer theme-marine-night">
+        <div id="stars-container" class="w-full h-full relative overflow-hidden"></div>
+    </div>
+
+    <!-- بوم نقاشی (Canvas) برای انیمیشن پرواز پرندگان و ذرات نور -->
+    <canvas id="skyCanvas" class="fixed inset-0 pointer-events-none z-10"></canvas>
+
+    <!-- نوار پیشرفت بالای صفحه -->
+    <div class="fixed top-0 left-0 right-0 h-1.5 bg-white/15 z-40">
+        <div id="progressBar" class="h-full bg-gradient-to-l from-amber-300 via-white to-sky-300 progress-bar" style="width: 20%;"></div>
+    </div>
+
+    <!-- هدر بالایی ریسپانسیو -->
+    <header class="relative z-30 w-full px-3 sm:px-6 lg:px-10 pt-3.5 sm:pt-5 pb-2 flex items-center justify-between gap-2 shrink-0">
+        <!-- لوگو و عنوان -->
+        <div class="flex items-center gap-2.5 min-w-0">
+            <div class="w-9 h-9 sm:w-11 sm:h-11 rounded-2xl glass-pill flex items-center justify-center shadow-lg shrink-0">
+                <svg class="w-5 h-5 sm:w-6 sm:h-6 text-amber-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M16 7h.01"/>
+                    <path d="M3.4 18H12a8 8 0 0 0 8-8V7a4 4 0 0 0-7.28-2.3L2 20"/>
+                    <path d="m20 7 2 .5-2 .5"/>
+                    <path d="M10 18v3"/>
+                    <path d="M14 17.75V21"/>
+                    <path d="M7 18a6 6 0 0 0 3.84-10.61"/>
+                </svg>
+            </div>
+            <div class="truncate">
+                <h1 class="text-xs sm:text-base font-extrabold tracking-wide text-white truncate">پرندگان ایران و انسان</h1>
+                <p class="text-[10px] sm:text-xs text-white/75 truncate">بر پایه دانشنامه پرندگان ایران</p>
+            </div>
+        </div>
+
+        <!-- دکمه‌های ابزار هدر: مرورگر ۲۱ راسته، صدا، تمام‌صفحه و شمارنده -->
+        <div class="flex items-center gap-1.5 sm:gap-2.5 shrink-0">
+            <!-- دکمه باز کردن مرورگر ۲۱ راسته علمی -->
+            <button id="openTaxonomyBtn" class="glass-pill px-2.5 sm:px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold flex items-center gap-1.5 hover:bg-white/25 transition active:scale-95 cursor-pointer" title="مرور ۲۱ راسته علمی پرندگان ایران">
+                <svg class="w-4 h-4 text-amber-300 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                    <rect x="3" y="3" width="7" height="7" rx="1.5"/>
+                    <rect x="14" y="3" width="7" height="7" rx="1.5"/>
+                    <rect x="14" y="14" width="7" height="7" rx="1.5"/>
+                    <rect x="3" y="14" width="7" height="7" rx="1.5"/>
+                </svg>
+                <span class="hidden md:inline">۲۱ راسته علمی</span>
+                <span class="md:hidden">راسته‌ها</span>
+            </button>
+
+            <!-- دکمه آوای طبیعت -->
+            <button id="soundToggleBtn" title="پخش یا قطع آوای پرندگان" class="glass-pill p-2 sm:px-3 sm:py-2 rounded-xl text-xs sm:text-sm font-medium flex items-center gap-1.5 hover:bg-white/25 transition active:scale-95 cursor-pointer">
+                <span id="soundIcon" class="text-sm sm:text-base leading-none">🔇</span>
+                <span class="hidden lg:inline" id="soundLabel">آوای طبیعت</span>
+            </button>
+
+            <!-- دکمه تمام‌صفحه -->
+            <button id="fullscreenBtn" title="نمایش تمام‌صفحه" class="hidden sm:flex glass-pill p-2 rounded-xl hover:bg-white/25 transition active:scale-95 cursor-pointer items-center justify-center">
+                <svg id="fullscreenIcon" class="w-4 h-4 sm:w-5 sm:h-5 text-white/90" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/>
+                </svg>
+            </button>
+
+            <!-- شمارنده اسلاید -->
+            <div class="glass-pill px-2.5 sm:px-3.5 py-2 rounded-xl text-xs sm:text-sm font-extrabold tracking-wider">
+                <span id="currentSlideNum" class="text-amber-300">۰۱</span>
+                <span class="text-white/50 mx-0.5">/</span>
+                <span class="text-white/85">۰۵</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- کانتینر اصلی اسلایدها (انعطاف‌پذیر در مرکز صفحه بدون سرریز افقی) -->
+    <main id="sliderViewport" class="relative z-20 flex-1 w-full flex items-center justify-center px-3 sm:px-6 lg:px-12 py-1 overflow-hidden">
+        <!-- کارت اصلی محتوای اسلاید -->
+        <div id="parallaxCard" class="w-full max-w-5xl max-h-full glass-card rounded-2xl sm:rounded-3xl p-4 sm:p-8 lg:p-10 transition-transform duration-200 ease-out relative overflow-y-auto custom-scroll">
+            
+            <!-- درخشش‌های تزئینی نرم -->
+            <div class="absolute -top-24 -left-24 w-56 h-56 bg-white/10 rounded-full blur-3xl pointer-events-none"></div>
+            <div class="absolute -bottom-24 -right-24 w-64 h-64 bg-amber-400/10 rounded-full blur-3xl pointer-events-none"></div>
+
+            <!-- شبکه محتوای اسلاید -->
+            <div id="slideContent" class="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-7 lg:gap-8 items-center">
+                <!-- محتوا در این بخش رندر می‌شود -->
+            </div>
+        </div>
+    </main>
+
+    <!-- مودال ۱: جزئیات علمی و زیست‌محیطی هر اسلاید -->
+    <div id="detailModal" class="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 bg-slate-950/70 backdrop-blur-md opacity-0 pointer-events-none transition-opacity duration-300">
+        <div id="detailModalBox" class="glass-card bg-slate-900/90 border-amber-300/35 max-w-xl w-full max-h-[88dvh] flex flex-col rounded-3xl p-5 sm:p-7 transform scale-95 transition-transform duration-300 shadow-2xl">
+            <!-- هدر مودال -->
+            <div class="flex items-start justify-between gap-3 pb-4 border-b border-white/15 shrink-0">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 sm:w-11 sm:h-11 rounded-2xl bg-amber-400/20 border border-amber-300/40 flex items-center justify-center text-amber-300 shrink-0">
+                        <svg class="w-5 h-5 sm:w-6 sm:h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/>
+                            <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <span id="detailTaxonBadge" class="text-[11px] sm:text-xs font-semibold text-amber-300 block">داده‌های علمی ایران‌بردز</span>
+                        <h3 id="detailTitle" class="text-base sm:text-xl font-bold text-white leading-snug">جزئیات علمی گونه</h3>
+                    </div>
+                </div>
+                <button id="closeDetailBtn" aria-label="بستن" class="p-2 rounded-xl bg-white/10 hover:bg-white/20 text-white/80 hover:text-white transition cursor-pointer shrink-0">
+                    <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M18 6 6 18M6 6l12 12"/>
+                    </svg>
+                </button>
+            </div>
+
+            <!-- بدنه قابل اسکرول مودال -->
+            <div class="py-4 overflow-y-auto custom-scroll space-y-4 text-right">
+                <!-- جدول مشخصات کلیدی -->
+                <div id="detailSpecsGrid" class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                    <!-- مشخصات پویا -->
+                </div>
+
+                <!-- شرح علمی و رابطه با انسان -->
+                <div class="bg-white/5 border border-white/10 rounded-2xl p-4">
+                    <h4 class="text-xs sm:text-sm font-bold text-amber-200 mb-1.5">بررسی زیست‌محیطی و پیوند با انسان:</h4>
+                    <p id="detailBody" class="text-white/90 text-xs sm:text-sm leading-relaxed text-justify"></p>
+                </div>
+            </div>
+
+            <!-- فوتر مودال -->
+            <div class="pt-3 border-t border-white/15 flex items-center justify-between gap-2 shrink-0">
+                <span class="text-[11px] text-white/60">مرجع: iranbirds.com</span>
+                <button id="confirmDetailBtn" class="px-5 py-2.5 rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-950 font-bold text-xs sm:text-sm transition shadow-lg cursor-pointer">
+                    بستن پنجره
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- مودال ۲: مرورگر تعاملی ۲۱ راسته علمی پرندگان ایران -->
+    <div id="taxonomyModal" class="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 bg-slate-950/75 backdrop-blur-md opacity-0 pointer-events-none transition-opacity duration-300">
+        <div id="taxonomyModalBox" class="glass-card bg-slate-900/95 border-sky-300/30 max-w-4xl w-full max-h-[90dvh] flex flex-col rounded-3xl p-4 sm:p-7 transform scale-95 transition-transform duration-300 shadow-2xl">
+            <!-- هدر مودال راسته‌ها -->
+            <div class="flex items-center justify-between gap-3 pb-3 sm:pb-4 border-b border-white/15 shrink-0">
+                <div>
+                    <span class="text-[11px] sm:text-xs font-semibold text-sky-300 block">طبقه‌بندی علمی در دانشنامه پرندگان ایران</span>
+                    <h3 class="text-base sm:text-xl font-extrabold text-white">۲۱ راسته پرندگان ایران (Orders)</h3>
+                </div>
+                <button id="closeTaxonomyBtn" aria-label="بستن" class="p-2 rounded-xl bg-white/10 hover:bg-white/20 text-white/80 hover:text-white transition cursor-pointer">
+                    <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M18 6 6 18M6 6l12 12"/>
+                    </svg>
+                </button>
+            </div>
+
+            <!-- نوار جستجو و فیلتر سریع راسته‌ها -->
+            <div class="py-3 flex flex-col sm:flex-row gap-2.5 shrink-0">
+                <div class="relative flex-1">
+                    <input id="taxonSearchInput" type="text" placeholder="جستجوی نام راسته یا پرنده (مثلاً: جغد، شاهین، پلیکان، کشیم...)" class="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-2.5 text-xs sm:text-sm text-white placeholder-white/50 focus:outline-none focus:border-amber-300 transition">
+                </div>
+                <div class="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0 custom-scroll">
+                    <button data-filter="all" class="taxon-filter-btn active px-3 py-2 rounded-xl text-xs font-bold bg-amber-400 text-slate-950 whitespace-nowrap cursor-pointer">همه (۲۱)</button>
+                    <button data-filter="water" class="taxon-filter-btn px-3 py-2 rounded-xl text-xs font-semibold bg-white/10 hover:bg-white/20 text-white whitespace-nowrap cursor-pointer">آبزی و کنارآبزی</button>
+                    <button data-filter="raptor" class="taxon-filter-btn px-3 py-2 rounded-xl text-xs font-semibold bg-white/10 hover:bg-white/20 text-white whitespace-nowrap cursor-pointer">شکاری و شب‌زی</button>
+                    <button data-filter="land" class="taxon-filter-btn px-3 py-2 rounded-xl text-xs font-semibold bg-white/10 hover:bg-white/20 text-white whitespace-nowrap cursor-pointer">خشکی‌زی و آوازخوان</button>
+                </div>
+            </div>
+
+            <!-- شبکه کارت‌های ۲۱ راسته -->
+            <div id="taxonomyGrid" class="flex-1 overflow-y-auto custom-scroll grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5 sm:gap-3 py-1 pr-0.5">
+                <!-- آیتم‌ها با جاوااسکریپت رندر می‌شوند -->
+            </div>
+
+            <!-- فوتر مودال راسته‌ها -->
+            <div class="pt-3 mt-2 border-t border-white/15 flex items-center justify-between text-[11px] sm:text-xs text-white/70 shrink-0">
+                <span>منبع دسته‌بندی: <a href="https://iranbirds.com/" target="_blank" rel="noopener noreferrer" class="text-amber-300 hover:underline font-semibold">iranbirds.com</a></span>
+                <span id="taxonCountLabel">نمایش ۲۱ راسته علمی</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- فوتر پایین صفحه: کنترل‌های ناوبری لمسی و لینک منبع -->
+    <footer class="relative z-30 w-full px-3 sm:px-6 lg:px-10 pb-3 sm:pb-5 pt-2 shrink-0">
+        <div class="max-w-5xl mx-auto flex flex-col gap-2">
+            <!-- ردیف دکمه‌های ناوبری و نقاط -->
+            <div class="flex items-center justify-between gap-2">
+                <!-- دکمه اسلاید قبلی (حداقل ارتفاع 44px برای لمس راحت در موبایل) -->
+                <button id="prevBtn" class="min-h-[44px] glass-pill px-3.5 sm:px-5 py-2 rounded-2xl flex items-center gap-1.5 text-xs sm:text-sm font-bold hover:bg-white/25 disabled:opacity-35 disabled:pointer-events-none transition active:scale-95 cursor-pointer">
+                    <svg class="w-4 h-4 sm:w-5 sm:h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="m9 18 6-6-6-6"/>
+                    </svg>
+                    <span>قبلی</span>
+                </button>
+
+                <!-- نقاط ناوبری (Pagination Dots) -->
+                <div id="dotsContainer" class="flex items-center gap-1.5 sm:gap-2.5 glass-pill px-3.5 sm:px-4 py-2.5 rounded-full">
+                    <!-- نقاط به صورت پویا ساخته می‌شوند -->
+                </div>
+
+                <!-- دکمه اسلاید بعدی -->
+                <button id="nextBtn" class="min-h-[44px] glass-pill px-3.5 sm:px-5 py-2 rounded-2xl flex items-center gap-1.5 text-xs sm:text-sm font-bold hover:bg-white/25 disabled:opacity-35 disabled:pointer-events-none transition active:scale-95 cursor-pointer">
+                    <span>بعدی</span>
+                    <svg class="w-4 h-4 sm:w-5 sm:h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="m15 18-6-6 6-6"/>
+                    </svg>
+                </button>
+            </div>
+
+            <!-- ردیف ارجاع به منبع علمی -->
+            <div class="flex items-center justify-center text-center">
+                <p class="text-[10px] sm:text-xs text-white/75 tracking-wide">
+                    منبع اطلاعات علمی: 
+                    <a href="https://iranbirds.com/" target="_blank" rel="noopener noreferrer" class="text-amber-300 hover:text-amber-200 underline decoration-amber-300/50 underline-offset-4 font-bold transition">
+                        دانشنامه پرندگان ایران (iranbirds.com)
+                    </a>
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        /**
+         * داده‌های ۲۱ راسته علمی پرندگان ایران بر اساس ساختار تاکسونومی سایت iranbirds.com
+         */
+        const iranBirdOrders = [
+            { num: "۰۱", fa: "راسته غواص‌سانان", en: "Gaviiformes", category: "water", sample: "غواص گلوسرخ، غواص گلو سیاه" },
+            { num: "۰۲", fa: "راسته کشیم‌سانان", en: "Podicipediformes", category: "water", sample: "کشیم گردن‌سرخ، کشیم بزرگ" },
+            { num: "۰۳", fa: "راسته کبوتردریایی‌سانان", en: "Procellariiformes", category: "water", sample: "کبوتردریایی پاگوشتی، مرغ طوفان" },
+            { num: "۰۴", fa: "راسته فائتون‌سانان", en: "Phaethontiformes", category: "water", sample: "فائتون نوک‌سرخ دریایی" },
+            { num: "۰۵", fa: "راسته پلیکان‌سانان", en: "Pelecaniformes", category: "water", sample: "پلیکان پاخاکستری، حواصیل، اگرت" },
+            { num: "۰۶", fa: "راسته بوبی‌سانان", en: "Suliformes", category: "water", sample: "باکلان بزرگ، مارگردن، بوبی نقاب‌دار" },
+            { num: "۰۷", fa: "راسته لک‌لک‌سانان", en: "Ciconiiformes", category: "water", sample: "لک‌لک سفید، لک‌لک سیاه" },
+            { num: "۰۸", fa: "راسته فلامینگوسانان", en: "Phoenicopteriformes", category: "water", sample: "فلامینگو بزرگ (تالاب‌های ایران)" },
+            { num: "۰۹", fa: "راسته غازسانان", en: "Anseriformes", category: "water", sample: "قو، غاز خاکستری، اردک سرسبز، خوتکا" },
+            { num: "۱۰", fa: "راسته بازسانان", en: "Accipitriformes", category: "raptor", sample: "کورکور سیاه، عقاب طلایی، هما، دال" },
+            { num: "۱۱", fa: "راسته شاهین‌سانان", en: "Falconiformes", category: "raptor", sample: "بحری، بالابان، شاهین، دلیجه" },
+            { num: "۱۲", fa: "راسته ماکیان‌سانان", en: "Galliformes", category: "land", sample: "کبک، تیهو، قرقاول، بلدرچین، دراج" },
+            { num: "۱۳", fa: "راسته درناسانان", en: "Gruiformes", category: "water", sample: "درنای سیبری، درنای معمولی، چنگر، هوبره" },
+            { num: "۱۴", fa: "راسته سلیم‌سانان", en: "Charadriiformes", category: "water", sample: "کاکایی، پرستودریایی، خروس‌کلی، آبچلیک" },
+            { num: "۱۵", fa: "راسته کوکرسانان", en: "Pterocliformes", category: "land", sample: "کوکر شکم‌سیاه، کوکر گندمی" },
+            { num: "۱۶", fa: "راسته کبوترسانان", en: "Columbiformes", category: "land", sample: "کبوتر چاهی، قمری خانگی، یاکریم" },
+            { num: "۱۷", fa: "راسته کوکوسانان", en: "Cuculiformes", category: "land", sample: "کوکو، کوکوی خالدار" },
+            { num: "۱۸", fa: "راسته جغدسانان", en: "Strigiformes", category: "raptor", sample: "جغد کوچک، جغد ماهیخوار قهوه‌ای، شاه‌بوف" },
+            { num: "۱۹", fa: "راسته شبگردسانان", en: "Caprimulgiformes", category: "land", sample: "شبگرد معمولی، بادخورک دودی" },
+            { num: "۲۰", fa: "راسته سبزقباسانان", en: "Coraciiformes", category: "land", sample: "ماهی‌خورک، زنبورخوار، سبزقبا، هدهد" },
+            { num: "۲۱", fa: "راسته گنجشک‌سانان", en: "Passeriformes", category: "land", sample: "بلبل، زاغی، سهره، چکاوک، پرستو، گنجشک" }
+        ];
+
+        /**
+         * داده‌های ۵ اسلاید اصلی بر پایه اطلاعات علمی دانشنامه پرندگان ایران (iranbirds.com)
+         */
+        const slidesData = [
+            {
+                id: 0,
+                badge: "فصل ۱ • تنوع زیستی و تاکسونومی",
+                title: "دانشنامه پرندگان ایران؛ از تاکسونومی تا زیست‌بوم",
+                subtitle: "پلی میان دانش پرنده‌شناسی و مسئولیت انسانی در قبال طبیعت",
+                description: "ایران به دلیل موقعیت جغرافیایی منحصربه‌فرد در تقاطع سه قلمرو زیستی، میزبان بیش از ۵۵۰ گونه پرنده در قالب ۲۱ راسته علمی (از غواص‌سانان و کشیم‌سانان تا شکاریان و گنجشک‌سانان) است. شناخت دقیق این گونه‌ها نخستین گام برای همزیستی پایدار انسان و حفاظت از کریدورهای مهاجرت است.",
+                highlights: [
+                    { label: "طبقه‌بندی علمی", value: "۲۱ راسته و بیش از ۵۵۰ گونه" },
+                    { label: "جایگاه جغرافیایی", value: "گذرگاه کلیدی پرندگان مهاجر" }
+                ],
+                detailTaxon: "ساختار رده‌بندی: ۲۱ راسته علمی در iranbirds.com",
+                detailTitle: "اهمیت شناخت علمی پرندگان ایران",
+                detailSpecs: [
+                    { key: "تعداد راسته‌های علمی", val: "۲۱ راسته (Orders)" },
+                    { key: "زیستگاه‌های شاخص", val: "تالاب‌ها، کوهستان‌ها، کویر و سواحل" },
+                    { key: "نقش دانشنامه", val: "مستندسازی و آموزش پرنده‌نگری" },
+                    { key: "پیوند با انسان", val: "شاخص سلامت محیط زیست و کشاورزی" }
+                ],
+                detailBody: "در دانشنامه پرندگان ایران (iranbirds.com)، پرندگان بر اساس آخرین استانداردهای تاکسونومی جهانی در ۲۱ راسته دسته‌بندی شده‌اند. پرندگان حساس‌ترین شاخص‌های زیستی (Bio-indicators) هستند؛ تغییر در جمعیت آن‌ها نخستین هشدار درباره آلودگی آب، خاک و تغییرات اقلیمی برای جوامع انسانی است.",
+                svgIllustration: `
+                    <svg class="w-36 h-36 sm:w-52 sm:h-52 lg:w-60 lg:h-60 text-amber-200 drop-shadow-[0_12px_24px_rgba(251,191,36,0.35)] animate-float" viewBox="0 0 200 200" fill="none">
+                        <circle cx="100" cy="100" r="80" stroke="currentColor" stroke-width="1.5" stroke-dasharray="5 5" opacity="0.45"/>
+                        <circle cx="100" cy="100" r="56" stroke="#FDE68A" stroke-width="1" opacity="0.3"/>
+                        <!-- نقشه‌واره‌ای نمادین از پرواز بر فراز فلات ایران -->
+                        <path d="M35 135 Q70 105 100 122 T165 110" stroke="#FDE68A" stroke-width="2.5" stroke-linecap="round" opacity="0.7"/>
+                        <!-- پرنده اوج‌گیرنده -->
+                        <path d="M100 98 C74 64, 32 54, 20 68 C40 78, 64 92, 86 108 Z" fill="currentColor"/>
+                        <path d="M100 98 C126 64, 168 54, 180 68 C160 78, 136 92, 114 108 Z" fill="currentColor"/>
+                        <path d="M100 72 C94 86, 94 106, 100 132 C106 106, 106 86, 100 72 Z" fill="#FFFFFF"/>
+                        <circle cx="100" cy="40" r="10" fill="#FDE68A" opacity="0.85"/>
+                    </svg>
+                `
+            },
+            {
+                id: 1,
+                badge: "فصل ۲ • همزیستی در حاشیه شهرها",
+                title: "کورکور سیاه؛ پاک‌کننده طبیعی شهرهای انسان",
+                subtitle: "راسته بازسانان (Accipitriformes) • خانواده بازان",
+                description: "کورکور سیاه (Milvus migrans) یکی از سازگارترین پرندگان شکاری با زندگی انسانی است. این پرنده که هم شکارچی و هم مردارخوار است، اغلب در نزدیکی سکونتگاه‌های انسانی، حاشیه شهرها، تالاب‌ها و مراکز غذایی دیده می‌شود و با تغذیه از پسماندهای آلی، نقش حیاتی در پاک‌سازی محیط زیست انسان ایفا می‌کند.",
+                highlights: [
+                    { label: "رفتار تغذیه‌ای", value: "شکارچی و مردارخوار (رفتگر طبیعت)" },
+                    { label: "زیستگاه و پراکندگی", value: "گسترده در ایران و حاشیه شهرها" }
+                ],
+                detailTaxon: "راسته بازسانان • Milvus migrans (Black Kite)",
+                detailTitle: "کورکور سیاه و نقش بهداشتی در محیط‌های انسانی",
+                detailSpecs: [
+                    { key: "نام علمی", val: "Milvus migrans" },
+                    { key: "طول بدن و بال", val: "طول ۵۵ تا ۶۰ سانتی‌متر • دم دوشاخه" },
+                    { key: "زیستگاه محبوب", val: "حاشیه شهرها، تالاب‌ها و دشت‌های باز" },
+                    { key: "خدمت اکولوژیک", val: "جلوگیری از شیوع بیماری با حذف لاشه‌ها" }
+                ],
+                detailBody: "بر اساس داده‌های دانشنامه پرندگان ایران، کورکور سیاه با پرواز چرخشی آرام و دم دوشاخه کم‌عمق خود به سادگی شناسایی می‌شود. این پرنده برخلاف بسیاری از شکاریان که از انسان دوری می‌کنند، همزیستی نزدیکی با جوامع انسانی دارد و به عنوان «پاک‌کننده طبیعی» مانع از فساد بقایای جانوری در پیرامون شهرها و روستاها می‌شود.",
+                svgIllustration: `
+                    <svg class="w-36 h-36 sm:w-52 sm:h-52 lg:w-60 lg:h-60 text-orange-200 drop-shadow-[0_12px_24px_rgba(251,146,60,0.4)] animate-float" viewBox="0 0 200 200" fill="none">
+                        <circle cx="100" cy="100" r="76" stroke="currentColor" stroke-width="1.5" opacity="0.35"/>
+                        <!-- سیلوئت شهر در افق پایین -->
+                        <path d="M36 146 H164 M50 146 V128 H64 V146 M72 146 V120 H88 V146 M112 146 V124 H126 V146 M134 146 V132 H150 V146" stroke="#FED7AA" stroke-width="2" opacity="0.55"/>
+                        <!-- کورکور سیاه با بال‌های کشیده و دم دوشاخه مشخص -->
+                        <path d="M100 84 C68 58, 28 56, 16 74 C38 80, 66 90, 88 98 Z" fill="#FFFFFF"/>
+                        <path d="M100 84 C132 58, 172 56, 184 74 C162 80, 134 90, 112 98 Z" fill="#FFFFFF"/>
+                        <!-- دم دوشاخه (Forked Tail) ویژگی شاخص کورکور سیاه -->
+                        <path d="M93 96 L86 124 L100 116 L114 124 L107 96 Z" fill="#FDBA74"/>
+                        <circle cx="100" cy="76" r="6" fill="#FFFFFF"/>
+                    </svg>
+                `
+            },
+            {
+                id: 2,
+                badge: "فصل ۳ • اسطوره، فرهنگ و علم",
+                title: "جغد کوچک؛ نماد دانایی و همسایه روز و شب",
+                subtitle: "راسته جغدسانان (Strigiformes) • خانواده جغدان",
+                description: "جغد کوچک (Athene noctua) که در اساطیر باستان با نام «جغد آتنا» نماد خرد و دانایی بوده، برخلاف تصور عموم که جغدها را فقط شب‌زی می‌دانند، در طول روز نیز در مناطق باز، باغ‌ها و بناهای قدیمی فعال است. این گونه ساکن ایران است و مهاجرت‌های طولانی ندارد.",
+                highlights: [
+                    { label: "الگوی فعالیت", value: "فعال در روز و شب در مناطق باز" },
+                    { label: "وضعیت مهاجرت", value: "پرنده بومی و ساکن (بدون مهاجرت)" }
+                ],
+                detailTaxon: "راسته جغدسانان • Athene noctua (Little Owl)",
+                detailTitle: "جغد کوچک؛ پیوند افسانه، کشاورزی و علم",
+                detailSpecs: [
+                    { key: "نام علمی", val: "Athene noctua (جغد آتنا)" },
+                    { key: "اندازه", val: "جثه کوچک و توپر (حدود ۲۲ سانتی‌متر)" },
+                    { key: "رفتار زیستی", val: "ساکن مناطق باز، صخره‌ای و باغ‌های روستایی" },
+                    { key: "فایده برای کشاورزان", val: "کنترل طبیعی جوندگان و حشرات مزارع" }
+                ],
+                detailBody: "در دانشنامه پرندگان ایران اشاره شده که جغد کوچک با چشمان زرد درخشان و سر گرد بدون گوش‌پر، یکی از آشناترین جغدها برای انسان است. در گذشته خرافات نادرستی پیرامون جغدها وجود داشت، اما علم پرنده‌شناسی نشان داد هر جفت جغد کوچک سالانه صدها موش و آفت کشاورزی را شکار می‌کند و بهترین دوست کشاورزان است.",
+                svgIllustration: `
+                    <svg class="w-36 h-36 sm:w-52 sm:h-52 lg:w-60 lg:h-60 text-violet-200 drop-shadow-[0_12px_24px_rgba(167,139,250,0.4)] animate-float" viewBox="0 0 200 200" fill="none">
+                        <!-- هاله خورشید و ماه (نماد فعالیت در روز و شب) -->
+                        <circle cx="100" cy="100" r="76" stroke="#DDD6FE" stroke-width="1.5" stroke-dasharray="6 4" opacity="0.45"/>
+                        <!-- بدن جغد کوچک -->
+                        <path d="M68 110 C68 78, 82 64, 100 64 C118 64, 132 78, 132 110 C132 138, 118 152, 100 152 C82 152, 68 138, 68 110 Z" fill="#FFFFFF"/>
+                        <!-- قرص صورت و ابروهای سفید شاخص جغد کوچک -->
+                        <path d="M78 84 Q88 78 98 86 M122 84 Q112 78 102 86" stroke="#4C1D95" stroke-width="3" stroke-linecap="round"/>
+                        <!-- چشمان زرد درخشان -->
+                        <circle cx="88" cy="92" r="8" fill="#FBBF24"/>
+                        <circle cx="88" cy="92" r="3.5" fill="#1E1B4B"/>
+                        <circle cx="112" cy="92" r="8" fill="#FBBF24"/>
+                        <circle cx="112" cy="92" r="3.5" fill="#1E1B4B"/>
+                        <!-- منقار -->
+                        <path d="M97 98 L103 98 L100 106 Z" fill="#F59E0B"/>
+                        <!-- نقش پرهای سینه -->
+                        <path d="M86 120 Q100 126 114 120 M84 132 Q100 138 116 132" stroke="#C4B5FD" stroke-width="2.5" stroke-linecap="round"/>
+                    </svg>
+                `
+            },
+            {
+                id: 3,
+                badge: "فصل ۴ • تالاب‌ها و زیستگاه‌های آبی ایران",
+                title: "کشیم گردن‌سرخ و جغد ماهیخوار قهوه‌ای",
+                subtitle: "راسته کشیم‌سانان و جغدسانان • وابسته به سلامت آب‌های ایران",
+                description: "تالاب‌ها و رودخانه‌های ایران پناهگاه گونه‌های کم‌نظیری همچون «کشیم گردن‌سرخ» (با طول ۴۰ تا ۵۰ و گستردگی بال ۷۷ تا ۸۵ سانتی‌متر) و «جغد ماهیخوار قهوه‌ای» هستند که در کنار آب‌ها زندگی می‌کنند. بقای این پرندگان مستقیماً به مدیریت پایدار منابع آبی توسط انسان وابسته است.",
+                highlights: [
+                    { label: "کشیم گردن‌سرخ", value: "طول ۴۰-۵۰ سم • بال ۷۷-۸۵ سم" },
+                    { label: "جغد ماهیخوار قهوه‌ای", value: "زیستگاه: حاشیه رودخانه‌ها و تالاب‌ها" }
+                ],
+                detailTaxon: "Podiceps grisegena & Ketupa zeylonensis",
+                detailTitle: "پیوند حیات تالاب‌های ایران با پرندگان آبزی و کنارآبزی",
+                detailSpecs: [
+                    { key: "کشیم گردن‌سرخ", val: "طول ۴۰ تا ۵۰ سم • گستردگی بال ۷۷ تا ۸۵ سم" },
+                    { key: "جغد ماهیخوار قهوه‌ای", val: "شکارچی ماهی و دوزیستان در کنار آب‌ها" },
+                    { key: "زیستگاه‌های ایران", val: "تالاب انزلی، میانکاله، دریاچه پریشان و رودهای جنوب" },
+                    { key: "مسئولیت انسانی", val: "تامین حقابه تالاب‌ها و جلوگیری از آلودگی آب" }
+                ],
+                detailBody: "طبق اطلاعات ثبت‌شده در دانشنامه پرندگان ایران، کشیم گردن‌سرخ با گردن بلوطی و گونه سفید خود پرنده‌ای غواص و وابسته به آب‌های آرام و نیزارهاست. در کنار آن، جغد ماهیخوار قهوه‌ای یکی از شگفت‌انگیزترین جغدهای ایران است که در جنگل‌های حاشیه آب‌ها و رودخانه‌ها زیست می‌کند و از ماهی‌ها تغذیه می‌نماید. خشکی تالاب‌ها این پیوند هزارساله را تهدید می‌کند.",
+                svgIllustration: `
+                    <svg class="w-36 h-36 sm:w-52 sm:h-52 lg:w-60 lg:h-60 text-teal-200 drop-shadow-[0_12px_24px_rgba(45,212,191,0.4)] animate-float" viewBox="0 0 200 200" fill="none">
+                        <circle cx="100" cy="100" r="76" stroke="currentColor" stroke-width="1.5" opacity="0.35"/>
+                        <!-- امواج آب تالاب -->
+                        <path d="M28 134 Q52 126 76 134 T124 134 T172 134" stroke="#5EEAD4" stroke-width="3" stroke-linecap="round"/>
+                        <path d="M40 148 Q64 140 88 148 T136 148 T164 148" stroke="#99F6E4" stroke-width="2" stroke-linecap="round" opacity="0.6"/>
+                        <!-- نیزار -->
+                        <path d="M46 134 L42 82 M54 134 L56 90" stroke="#A7F3D0" stroke-width="2.5" stroke-linecap="round"/>
+                        <!-- کشیم گردن‌سرخ شناور روی آب -->
+                        <path d="M68 128 C74 112, 114 112, 134 124 C122 132, 82 132, 68 128 Z" fill="#FFFFFF"/>
+                        <!-- گردن کشیده و سر -->
+                        <path d="M120 122 C122 104, 120 88, 126 78 C132 72, 138 76, 136 84 C132 96, 130 110, 128 122 Z" fill="#F97316"/>
+                        <!-- منقار تیز -->
+                        <path d="M135 78 L152 80 L135 83 Z" fill="#FDE68A"/>
+                    </svg>
+                `
+            },
+            {
+                id: 4,
+                badge: "فصل ۵ • پهنه دریاها و حفاظت از آسمان",
+                title: "فائتون نوک‌سرخ دریایی و شکوه پرواز",
+                subtitle: "راسته فائتون‌سانان (Phaethontiformes) • نگهبانی از خلیج فارس و دریای عمان",
+                description: "فائتون نوک‌سرخ دریایی (Phaethon aethereus) یکی از زیباترین پرندگان دریایی آب‌های گرم جنوب ایران است که با پرهای سفید، منقار سرخ مرجانی و دو پر بسیار دراز در دم شناخته می‌شود. حفاظت از زیستگاه‌های دریایی و مشارکت شهروندان در پرنده‌نگری، ضامن تداوم پرواز این پرندگان است.",
+                highlights: [
+                    { label: "ویژگی ظاهری", value: "پرهای دم بسیار دراز و منقار سرخ" },
+                    { label: "مشارکت انسانی", value: "پرنده‌نگری اخلاق‌مدار و ثبت مشاهدات" }
+                ],
+                detailTaxon: "راسته فائتون‌سانان • Phaethon aethereus",
+                detailTitle: "فائتون نوک‌سرخ دریایی و حفاظت از دریاهای ایران",
+                detailSpecs: [
+                    { key: "نام علمی", val: "Phaethon aethereus (Red-billed Tropicbird)" },
+                    { key: "زیستگاه در ایران", val: "آب‌های آزاد خلیج فارس و دریای عمان" },
+                    { key: "ویژگی پرواز", val: "پرواز باشکوه و شیرجه برای شکار ماهی" },
+                    { key: "راهکار حفاظت", val: "کاهش پسماندهای پلاستیکی دریایی" }
+                ],
+                detailBody: "در دانشنامه پرندگان ایران، فائتون نوک‌سرخ دریایی به عنوان یکی از نمادهای پرندگان دریایی معرفی شده است. این پرنده بیشتر عمر خود را بر فراز اقیانوس‌ها و دریاهای گرم سپری می‌کند. کاهش آلودگی‌های نفتی و پلاستیکی در خلیج فارس و دریای عمان و حمایت از پژوهش‌های میدانی پرنده‌شناسان ایرانی، کلید حفظ این گوهرهای بالدار است.",
+                svgIllustration: `
+                    <svg class="w-36 h-36 sm:w-52 sm:h-52 lg:w-60 lg:h-60 text-sky-200 drop-shadow-[0_12px_24px_rgba(56,189,248,0.45)] animate-float" viewBox="0 0 200 200" fill="none">
+                        <circle cx="100" cy="100" r="76" stroke="#93C5FD" stroke-width="1.5" stroke-dasharray="4 6" opacity="0.45"/>
+                        <!-- ستارگان و آسمان شب دریا -->
+                        <circle cx="54" cy="48" r="2.5" fill="#FDE68A"/>
+                        <circle cx="152" cy="54" r="3" fill="#FDE68A"/>
+                        <!-- فائتون نوک‌سرخ در حال پرواز با دم بسیار دراز -->
+                        <path d="M110 86 C86 58, 52 46, 36 56 C56 68, 78 82, 98 96 Z" fill="#FFFFFF"/>
+                        <path d="M110 86 C132 62, 160 54, 174 64 C156 74, 136 84, 118 96 Z" fill="#FFFFFF"/>
+                        <!-- بدن ظریف -->
+                        <ellipse cx="112" cy="92" rx="18" ry="8" transform="rotate(-25 112 92)" fill="#FFFFFF"/>
+                        <!-- منقار سرخ مرجانی -->
+                        <path d="M126 83 L144 76 L128 88 Z" fill="#EF4444"/>
+                        <!-- دو پر بسیار دراز و مواج دم فائتون -->
+                        <path d="M96 100 C74 118, 52 142, 24 162" stroke="#FFFFFF" stroke-width="2.2" stroke-linecap="round"/>
+                        <path d="M99 102 C80 122, 60 146, 34 168" stroke="#BAE6FD" stroke-width="1.8" stroke-linecap="round"/>
+                    </svg>
+                `
+            }
+        ];
+
+        // متغیرهای وضعیت برنامه
+        let currentSlide = 0;
+        let isAnimating = false;
+        let wheelTimeout = null;
+        let touchStartX = 0;
+        let touchStartY = 0;
+
+        // عناصر DOM اصلی
+        const slideContentEl = document.getElementById('slideContent');
+        const dotsContainerEl = document.getElementById('dotsContainer');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const currentSlideNumEl = document.getElementById('currentSlideNum');
+        const progressBarEl = document.getElementById('progressBar');
+        const parallaxCardEl = document.getElementById('parallaxCard');
+
+        // عناصر مودال جزئیات علمی
+        const detailModal = document.getElementById('detailModal');
+        const detailModalBox = document.getElementById('detailModalBox');
+        const detailTaxonBadge = document.getElementById('detailTaxonBadge');
+        const detailTitleEl = document.getElementById('detailTitle');
+        const detailSpecsGrid = document.getElementById('detailSpecsGrid');
+        const detailBodyEl = document.getElementById('detailBody');
+        const closeDetailBtn = document.getElementById('closeDetailBtn');
+        const confirmDetailBtn = document.getElementById('confirmDetailBtn');
+
+        // عناصر مودال ۲۱ راسته علمی
+        const taxonomyModal = document.getElementById('taxonomyModal');
+        const taxonomyModalBox = document.getElementById('taxonomyModalBox');
+        const openTaxonomyBtn = document.getElementById('openTaxonomyBtn');
+        const closeTaxonomyBtn = document.getElementById('closeTaxonomyBtn');
+        const taxonomyGrid = document.getElementById('taxonomyGrid');
+        const taxonSearchInput = document.getElementById('taxonSearchInput');
+        const taxonCountLabel = document.getElementById('taxonCountLabel');
+        const filterBtns = document.querySelectorAll('.taxon-filter-btn');
+
+        // تبدیل اعداد انگلیسی به فارسی
+        function toPersianDigits(num) {
+            const persianDigits = ['۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹'];
+            return num.toString().padStart(2, '0').replace(/\d/g, d => persianDigits[d]);
+        }
+
+        // ساخت ستاره‌های چشمک‌زن در پس‌زمینه اسلاید شب دریا
+        function generateStars() {
+            const container = document.getElementById('stars-container');
+            if (!container) return;
+            for (let i = 0; i < 60; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                const size = Math.random() * 2.5 + 1;
+                star.style.width = `${size}px`;
+                star.style.height = `${size}px`;
+                star.style.top = `${Math.random() * 100}%`;
+                star.style.left = `${Math.random() * 100}%`;
+                star.style.setProperty('--duration', `${Math.random() * 3 + 2}s`);
+                star.style.animationDelay = `${Math.random() * 3}s`;
+                container.appendChild(star);
+            }
+        }
+
+        // ساخت نقاط ناوبری پایین صفحه
+        function initDots() {
+            dotsContainerEl.innerHTML = '';
+            slidesData.forEach((slide, index) => {
+                const dot = document.createElement('button');
+                dot.setAttribute('aria-label', `رفتن به اسلاید ${index + 1}`);
+                dot.className = `h-2.5 rounded-full transition-all duration-300 cursor-pointer ${
+                    index === currentSlide ? 'w-7 sm:w-9 bg-amber-300 shadow-[0_0_10px_rgba(252,211,77,0.85)]' : 'w-2.5 bg-white/40 hover:bg-white/75'
+                }`;
+                dot.addEventListener('click', () => goToSlide(index));
+                dotsContainerEl.appendChild(dot);
+            });
+        }
+
+        // رندر کردن اسلاید فعال
+        function renderSlide(index) {
+            const data = slidesData[index];
+
+            // تغییر نرم لایه پس‌زمینه
+            document.querySelectorAll('.bg-layer').forEach((layer, idx) => {
+                layer.classList.toggle('active', idx === index);
+            });
+
+            // به‌روزرسانی شمارنده و نوار پیشرفت
+            currentSlideNumEl.textContent = toPersianDigits(index + 1);
+            const progressPercent = ((index + 1) / slidesData.length) * 100;
+            progressBarEl.style.width = `${progressPercent}%`;
+
+            // به‌روزرسانی وضعیت دکمه‌ها
+            prevBtn.disabled = index === 0;
+            nextBtn.disabled = index === slidesData.length - 1;
+
+            initDots();
+
+            // انیمیشن ورود محتوا
+            slideContentEl.classList.remove('slide-enter');
+            void slideContentEl.offsetWidth;
+            slideContentEl.classList.add('slide-enter');
+
+            slideContentEl.innerHTML = `
+                <!-- ستون متنی -->
+                <div class="lg:col-span-7 flex flex-col items-start text-right space-y-3 sm:space-y-4">
+                    <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-[11px] sm:text-xs font-bold bg-white/15 border border-white/25 text-amber-200 shadow-sm">
+                        <span class="w-2 h-2 rounded-full bg-amber-300 animate-pulse"></span>
+                        ${data.badge}
+                    </span>
+
+                    <div>
+                        <h2 class="fluid-title font-black text-white mb-1.5">
+                            ${data.title}
+                        </h2>
+                        <p class="fluid-subtitle font-medium text-amber-200/95">
+                            ${data.subtitle}
+                        </p>
+                    </div>
+
+                    <p class="fluid-body text-white/90 text-justify font-normal">
+                        ${data.description}
+                    </p>
+
+                    <!-- کارت‌های شاخص کلیدی -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 w-full pt-0.5">
+                        ${data.highlights.map(item => `
+                            <div class="bg-white/10 border border-white/15 rounded-2xl px-3.5 py-2.5 flex flex-col">
+                                <span class="text-[11px] sm:text-xs text-white/65 mb-0.5">${item.label}</span>
+                                <span class="text-xs sm:text-sm font-bold text-white">${item.value}</span>
+                            </div>
+                        `).join('')}
+                    </div>
+
+                    <!-- دکمه تعاملی جزئیات علمی -->
+                    <div class="pt-1 flex flex-wrap items-center gap-2.5">
+                        <button id="openDetailBtn" class="min-h-[44px] group inline-flex items-center gap-2 px-4 sm:px-5 py-2.5 rounded-2xl bg-gradient-to-l from-amber-400 to-amber-300 hover:from-amber-300 hover:to-yellow-200 text-slate-950 font-extrabold text-xs sm:text-sm shadow-[0_10px_25px_-5px_rgba(251,191,36,0.45)] transition-all duration-300 hover:-translate-y-0.5 active:scale-95 cursor-pointer">
+                            <svg class="w-4 h-4 sm:w-5 sm:h-5 transition-transform duration-300 group-hover:rotate-12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                                <circle cx="12" cy="12" r="10"/>
+                                <path d="M12 16v-4M12 8h.01"/>
+                            </svg>
+                            <span>جزئیات علمی و زیست‌محیطی</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- ستون تصویرسازی برداری (بالا در موبایل، چپ در دسکتاپ) -->
+                <div class="lg:col-span-5 flex items-center justify-center order-first lg:order-last">
+                    <div class="relative flex items-center justify-center p-3 sm:p-5 rounded-full bg-white/5 border border-white/10">
+                        ${data.svgIllustration}
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('openDetailBtn').addEventListener('click', () => openDetailModal(data));
+            boostBirds();
+        }
+
+        // جابه‌جایی بین اسلایدها
+        function goToSlide(index) {
+            if (index < 0 || index >= slidesData.length || index === currentSlide || isAnimating) return;
+            isAnimating = true;
+            currentSlide = index;
+            renderSlide(currentSlide);
+            if (isSoundOn) playChirpSound();
+            setTimeout(() => {
+                isAnimating = false;
+            }, 450);
+        }
+
+        function nextSlide() {
+            if (currentSlide < slidesData.length - 1) goToSlide(currentSlide + 1);
+        }
+
+        function prevSlide() {
+            if (currentSlide > 0) goToSlide(currentSlide - 1);
+        }
+
+        // مدیریت مودال جزئیات علمی
+        function openDetailModal(data) {
+            detailTaxonBadge.textContent = data.detailTaxon;
+            detailTitleEl.textContent = data.detailTitle;
+            detailBodyEl.textContent = data.detailBody;
+
+            detailSpecsGrid.innerHTML = data.detailSpecs.map(spec => `
+                <div class="bg-white/10 border border-white/15 rounded-xl p-3">
+                    <span class="text-[11px] text-amber-200/80 block mb-0.5">${spec.key}</span>
+                    <span class="text-xs sm:text-sm font-bold text-white">${spec.val}</span>
+                </div>
+            `).join('');
+
+            detailModal.classList.remove('opacity-0', 'pointer-events-none');
+            detailModalBox.classList.remove('scale-95');
+            detailModalBox.classList.add('scale-100');
+            if (isSoundOn) playChirpSound();
+        }
+
+        function closeDetailModal() {
+            detailModal.classList.add('opacity-0', 'pointer-events-none');
+            detailModalBox.classList.remove('scale-100');
+            detailModalBox.classList.add('scale-95');
+        }
+
+        closeDetailBtn.addEventListener('click', closeDetailModal);
+        confirmDetailBtn.addEventListener('click', closeDetailModal);
+        detailModal.addEventListener('click', (e) => {
+            if (e.target === detailModal) closeDetailModal();
+        });
+
+        /**
+         * مدیریت مودال ۲۱ راسته علمی پرندگان ایران
+         */
+        let currentTaxonFilter = 'all';
+
+        function renderTaxonomyGrid() {
+            const query = taxonSearchInput.value.trim().toLowerCase();
+            const filtered = iranBirdOrders.filter(item => {
+                const matchesCat = currentTaxonFilter === 'all' || item.category === currentTaxonFilter;
+                const matchesText = item.fa.includes(query) || item.en.toLowerCase().includes(query) || item.sample.includes(query);
+                return matchesCat && matchesText;
+            });
+
+            taxonCountLabel.textContent = `نمایش ${toPersianDigits(filtered.length)} راسته از ۲۱ راسته`;
+
+            if (filtered.length === 0) {
+                taxonomyGrid.innerHTML = `
+                    <div class="col-span-full py-10 text-center text-white/60 text-sm">
+                        موردی با این عبارت یافت نشد. نام دیگری را جستجو کنید.
+                    </div>
+                `;
+                return;
+            }
+
+            taxonomyGrid.innerHTML = filtered.map(order => `
+                <div class="bg-white/8 hover:bg-white/14 border border-white/15 rounded-2xl p-3.5 transition flex flex-col justify-between gap-2">
+                    <div class="flex items-start justify-between gap-2">
+                        <div>
+                            <span class="text-[11px] font-bold text-amber-300">${order.fa}</span>
+                            <span class="text-[11px] text-sky-200/80 font-mono block" dir="ltr">${order.en}</span>
+                        </div>
+                        <span class="text-[11px] font-extrabold px-2 py-0.5 rounded-lg bg-white/10 text-white/80">${order.num}</span>
+                    </div>
+                    <p class="text-[11px] sm:text-xs text-white/80 leading-relaxed border-t border-white/10 pt-2">
+                        <span class="text-white/50">گونه‌های شاخص:</span> ${order.sample}
+                    </p>
+                </div>
+            `).join('');
+        }
+
+        function openTaxonomyModal() {
+            renderTaxonomyGrid();
+            taxonomyModal.classList.remove('opacity-0', 'pointer-events-none');
+            taxonomyModalBox.classList.remove('scale-95');
+            taxonomyModalBox.classList.add('scale-100');
+        }
+
+        function closeTaxonomyModal() {
+            taxonomyModal.classList.add('opacity-0', 'pointer-events-none');
+            taxonomyModalBox.classList.remove('scale-100');
+            taxonomyModalBox.classList.add('scale-95');
+        }
+
+        openTaxonomyBtn.addEventListener('click', openTaxonomyModal);
+        closeTaxonomyBtn.addEventListener('click', closeTaxonomyModal);
+        taxonomyModal.addEventListener('click', (e) => {
+            if (e.target === taxonomyModal) closeTaxonomyModal();
+        });
+
+        taxonSearchInput.addEventListener('input', renderTaxonomyGrid);
+
+        filterBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                filterBtns.forEach(b => {
+                    b.classList.remove('bg-amber-400', 'text-slate-950', 'font-bold');
+                    b.classList.add('bg-white/10', 'text-white', 'font-semibold');
+                });
+                btn.classList.remove('bg-white/10', 'text-white', 'font-semibold');
+                btn.classList.add('bg-amber-400', 'text-slate-950', 'font-bold');
+                currentTaxonFilter = btn.dataset.filter;
+                renderTaxonomyGrid();
+            });
+        });
+
+        // رویدادهای دکمه‌های ناوبری
+        prevBtn.addEventListener('click', prevSlide);
+        nextBtn.addEventListener('click', nextSlide);
+
+        // بررسی باز بودن مودال‌ها
+        function isAnyModalOpen() {
+            return !detailModal.classList.contains('pointer-events-none') || !taxonomyModal.classList.contains('pointer-events-none');
+        }
+
+        // ناوبری با کیبورد (با رعایت جهت RTL)
+        window.addEventListener('keydown', (e) => {
+            if (isAnyModalOpen()) {
+                if (e.key === 'Escape') {
+                    closeDetailModal();
+                    closeTaxonomyModal();
+                }
+                return;
+            }
+            if (e.key === 'ArrowLeft' || e.key === 'ArrowDown') {
+                e.preventDefault();
+                nextSlide();
+            } else if (e.key === 'ArrowRight' || e.key === 'ArrowUp') {
+                e.preventDefault();
+                prevSlide();
+            }
+        });
+
+        // ناوبری با چرخ ماوس (Scroll)
+        window.addEventListener('wheel', (e) => {
+            if (isAnyModalOpen() || wheelTimeout) return;
+            if (Math.abs(e.deltaY) > 25) {
+                if (e.deltaY > 0) nextSlide();
+                else prevSlide();
+                wheelTimeout = setTimeout(() => { wheelTimeout = null; }, 650);
+            }
+        }, { passive: true });
+
+        // پشتیبانی از کشیدن لمسی (Touch Swipe) روان در موبایل و تبلت
+        window.addEventListener('touchstart', (e) => {
+            touchStartX = e.changedTouches[0].screenX;
+            touchStartY = e.changedTouches[0].screenY;
+        }, { passive: true });
+
+        window.addEventListener('touchend', (e) => {
+            if (isAnyModalOpen()) return;
+            const diffX = e.changedTouches[0].screenX - touchStartX;
+            const diffY = e.changedTouches[0].screenY - touchStartY;
+
+            if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 40) {
+                if (diffX > 0) nextSlide();
+                else prevSlide();
+            }
+        }, { passive: true });
+
+        // جلوه پارالاکس ملایم کارت در دسکتاپ
+        window.addEventListener('mousemove', (e) => {
+            if (window.innerWidth < 1024 || isAnyModalOpen()) return;
+            const xAxis = (window.innerWidth / 2 - e.pageX) / 55;
+            const yAxis = (window.innerHeight / 2 - e.pageY) / 55;
+            parallaxCardEl.style.transform = `perspective(1200px) rotateY(${xAxis}deg) rotateX(${-yAxis}deg)`;
+        });
+
+        window.addEventListener('mouseleave', () => {
+            parallaxCardEl.style.transform = `perspective(1200px) rotateY(0deg) rotateX(0deg)`;
+        });
+
+        // دکمه تمام‌صفحه (Fullscreen)
+        const fullscreenBtn = document.getElementById('fullscreenBtn');
+        fullscreenBtn.addEventListener('click', () => {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(() => {});
+            } else {
+                document.exitFullscreen().catch(() => {});
+            }
+        });
+
+        /**
+         * شبیه‌سازی صوتی ملایم آواز پرندگان با Web Audio API
+         */
+        let audioCtx = null;
+        let isSoundOn = false;
+        let chirpInterval = null;
+        const soundToggleBtn = document.getElementById('soundToggleBtn');
+        const soundIcon = document.getElementById('soundIcon');
+        const soundLabel = document.getElementById('soundLabel');
+
+        function playChirpSound() {
+            try {
+                if (!audioCtx) {
+                    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                }
+                if (audioCtx.state === 'suspended') audioCtx.resume();
+
+                const now = audioCtx.currentTime;
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+
+                const baseFreq = 1900 + Math.random() * 1000;
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(baseFreq, now);
+                osc.frequency.exponentialRampToValueAtTime(baseFreq * 1.32, now + 0.08);
+                osc.frequency.exponentialRampToValueAtTime(baseFreq * 0.88, now + 0.18);
+
+                gain.gain.setValueAtTime(0.001, now);
+                gain.gain.exponentialRampToValueAtTime(0.035, now + 0.04);
+                gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.2);
+
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+
+                osc.start(now);
+                osc.stop(now + 0.22);
+            } catch (err) {}
+        }
+
+        soundToggleBtn.addEventListener('click', () => {
+            isSoundOn = !isSoundOn;
+            if (isSoundOn) {
+                soundIcon.textContent = '🔊';
+                soundLabel.textContent = 'آوای روشن';
+                playChirpSound();
+                chirpInterval = setInterval(() => {
+                    if (Math.random() > 0.35) playChirpSound();
+                }, 3200);
+            } else {
+                soundIcon.textContent = '🔇';
+                soundLabel.textContent = 'آوای طبیعت';
+                clearInterval(chirpInterval);
+            }
+        });
+
+        /**
+         * انیمیشن پس‌زمینه پرندگان در حال پرواز و ذرات نور با HTML5 Canvas
+         */
+        const canvas = document.getElementById('skyCanvas');
+        const ctx = canvas.getContext('2d');
+        let width, height;
+        let birds = [];
+        let particles = [];
+        let speedMultiplier = 1;
+
+        function resizeCanvas() {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+        }
+
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        class Bird {
+            constructor() {
+                this.reset(true);
+            }
+
+            reset(initial = false) {
+                const isMobile = width < 640;
+                this.size = isMobile ? (Math.random() * 7 + 5) : (Math.random() * 10 + 7);
+                this.x = initial ? Math.random() * width : -40;
+                this.y = Math.random() * (height * 0.78) + 35;
+                this.vx = (Math.random() * 1.1 + 0.55) * (this.size / 10);
+                this.vy = (Math.random() - 0.5) * 0.25;
+                this.wingPhase = Math.random() * Math.PI * 2;
+                this.wingSpeed = Math.random() * 0.08 + 0.065;
+                this.opacity = Math.random() * 0.45 + 0.22;
+            }
+
+            update() {
+                this.x += this.vx * speedMultiplier;
+                this.y += this.vy + Math.sin(this.wingPhase * 0.5) * 0.22;
+                this.wingPhase += this.wingSpeed * (speedMultiplier > 1 ? 1.5 : 1);
+
+                if (this.x > width + 50) {
+                    this.reset(false);
+                }
+            }
+
+            draw() {
+                ctx.save();
+                ctx.translate(this.x, this.y);
+                ctx.strokeStyle = `rgba(255, 255, 255, ${this.opacity})`;
+                ctx.lineWidth = 1.8;
+                ctx.lineCap = 'round';
+
+                const wingY = Math.sin(this.wingPhase) * (this.size * 0.65);
+
+                ctx.beginPath();
+                ctx.moveTo(0, 0);
+                ctx.quadraticCurveTo(-this.size * 0.6, wingY - this.size * 0.4, -this.size * 1.3, wingY);
+                ctx.moveTo(0, 0);
+                ctx.quadraticCurveTo(this.size * 0.6, wingY - this.size * 0.4, this.size * 1.3, wingY);
+                ctx.stroke();
+                ctx.restore();
+            }
+        }
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * width;
+                this.y = Math.random() * height;
+                this.radius = Math.random() * 2 + 0.5;
+                this.vx = (Math.random() - 0.5) * 0.25;
+                this.vy = -Math.random() * 0.35 - 0.1;
+                this.alpha = Math.random() * 0.38 + 0.1;
+            }
+
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+                if (this.y < 0) this.y = height;
+                if (this.x < 0) this.x = width;
+                if (this.x > width) this.x = 0;
+            }
+
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(255, 255, 255, ${this.alpha})`;
+                ctx.fill();
+            }
+        }
+
+        function initSkyEntities() {
+            const birdCount = width < 640 ? 9 : 15;
+            const particleCount = width < 640 ? 20 : 35;
+            birds = Array.from({ length: birdCount }, () => new Bird());
+            particles = Array.from({ length: particleCount }, () => new Particle());
+        }
+
+        function boostBirds() {
+            speedMultiplier = 3.0;
+            setTimeout(() => { speedMultiplier = 1; }, 600);
+        }
+
+        function animateSky() {
+            ctx.clearRect(0, 0, width, height);
+            particles.forEach(p => { p.update(); p.draw(); });
+            birds.forEach(b => { b.update(); b.draw(); });
+            requestAnimationFrame(animateSky);
+        }
+
+        window.onload = function() {
+            generateStars();
+            initSkyEntities();
+            animateSky();
+            renderSlide(0);
+        };
+    </script>
+</body>
+</html>
